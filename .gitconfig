@@ -1,0 +1,19 @@
+[user]
+	email = comifred@google.com
+	name = Fred
+[core]
+	editor = vim
+[alias]
+    co = checkout
+    cm = commit
+    st = status -sb
+    # Show verbose output about tags, branches or remotes
+    tags = tag -l
+    branches = branch -a
+    remotes = remote -v
+    unstage = rm --cached
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
+[gpg]
+	program = gpg2
+[color]
+	ui = true
