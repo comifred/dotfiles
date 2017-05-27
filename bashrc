@@ -24,4 +24,8 @@ export HISTCONTROL=ignoreboth
 export HISTIGNORE='ls'
 export EDITOR='/usr/bin/vim'
 
+# tumx settings
+#setxkbmap -option ctrl:nocaps
+alias tmux='TERM=xterm-256color tmux -2'
+
 source ~/.git-completion.bash

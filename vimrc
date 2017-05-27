@@ -66,6 +66,11 @@ set rtp+=~/.vim/bundle/Vundle.vim   " set the runtime path to include Vundle and
 call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'       " let Vundle manage Vundle, required
+filetype plugin indent on    " required
+
+" Repeat.vim remaps . in a way that plugins can tap into it.
+" namp <silent> YouMap :call repeat#set("\<Plug>YouMap", v:count) <CR>
+Plugin 'tpope/vim-repeat'
 
 " YouCompleteMe is a fast, as-you-type, fuzzy-search code completion engine for Vim. Need make. See :h complete-functions.
 Plugin 'Valloric/YouCompleteMe', {'pinned': 1} "{{{
@@ -137,9 +142,24 @@ Plugin 'scrooloose/nerdtree'    "{{{
     nmap  <Leader>nc :tabclose<CR>
 "}}}
 
+" it's useful to line up text and switch among tabs.
+Plugin 'godlygeek/tabular'   "{{{
+    nnoremap [b :bp<CR>
+    nnoremap ]b :bn<CR>
+    map <leader>1 :b 1<CR>
+    map <leader>2 :b 2<CR>
+    map <leader>3 :b 3<CR>
+    map <leader>4 :b 4<CR>
+    map <leader>5 :b 5<CR>
+    map <leader>6 :b 6<CR>
+    map <leader>7 :b 7<CR>
+    map <leader>8 :b 8<CR>
+    map <leader>9 :b 9<CR>
+"}}}
+
 " quickly highlight <cword> or visually selected word http://www.vim.org/scripts/script.php?script_id=3692
 Plugin 't9md/vim-quickhl'   "{{{
-    nmap <Space>m <Plug>(quickhl-manual-this)
+    nmap <silent> <Space>m <Plug>(quickhl-manual-this) :call repeat#set("\<Plug>(quickhl-manual-this)") <CR>
     xmap <Space>m <Plug>(quickhl-manual-this)
     nmap <Space>M <Plug>(quickhl-manual-reset)
     xmap <Space>M <Plug>(quickhl-manual-reset)
@@ -157,7 +177,7 @@ Plugin 'rking/ag.vim'       "{{{
 " An ack/ag/pt powered code search and view tool, need Ack2 installed. See :h ctrlsf-arguments
 Plugin 'dyng/ctrlsf.vim'    "{{{
     nnoremap <Leader>sf :CtrlSF<CR>
-    nnoremap <Leader>sq :CtrlSFQuickfix<CR>
+    "nnoremap <Leader>sq :CtrlSFQuickfix<CR>
     nmap     <Leader>sF <Plug>CtrlSFPrompt
     nnoremap <Leader>su :CtrlSFUpdate<CR>
     nnoremap <Leader>so :CtrlSFOpen<CR>
@@ -171,7 +191,10 @@ Plugin 'vim-scripts/a.vim'      "{{{
 "}}}
 
 " Plugin generates symbol dependency tree (aka call tree, call graph) in real-time inside Vim using a Cscope database.
+" cp -f ~/.vim/bundle/CCTree/ftplugin/cctree.vim ~/.vim/plugin/
+" It's slow, be patient
 Plugin 'vim-scripts/CCTree'     "{{{
+    let CCTreeEnhancedSymbolProcessing = 1
     nmap <Leader>zl  :CCTreeLoadDB cscope.out<CR>
     nmap <Leader>xl  :CCTreeLoadXRefDBFromDisk cctree.out<CR>
     nmap <Leader>xs  :CCTreeSaveXRefDB cctree.out<CR>
@@ -182,25 +205,38 @@ Plugin 'vim-scripts/CCTree'     "{{{
     nmap <Leader>z-  :CCTreeRecurseDepthMinus<CR>
     nmap <Leader>zy  :CCTreeWindowSaveCopy<CR>
     nmap <Leader>zw  :CCTreeWindowToggle<CR>
+    "autocmd VimEnter if filereadable('cscope.out') | CCTreeLoadDB cscope.out | endif
+    autocmd VimEnter if filereadable('cctree.out') | CCTreeLoadXRefDbFromDisk cctree.out | endif
 "}}}
 
 " a source code browser plugin for Vim
 Plugin 'vim-scripts/taglist.vim'    "{{{
     let tagbar_left=1
     let tagbar_width=32
-    nnoremap <Leader>tl :Tlist<CR>
+    nnoremap <Leader>tg :Tlist<CR>
     nmap <Leader>tn :tnext<CR>
     nmap <Leader>tp :tprevious<CR>
+    nmap <Leader>tl :tlast<CR>
 "}}}
-
-" Repeat.vim remaps . in a way that plugins can tap into it.
-Plugin 'tpope/vim-repeat'
 
 " Surround.vim is all about surroundings: parentheses, brackets, quotes, XML tags, and more. Command: yss, ysiw, cs, ds; Example: yss], ysiw", yss<p>, cs"', ds"
 Plugin 'tpope/vim-surround'
 
+" insert mode auto-completion for quotes, parens, brackets, etc.
+Plugin 'Raimondi/delimitMate'
+
+" Better Rainbow Parentheses. :RainbowParenthesesToggle  #Toggle it on/off
+Plugin 'kien/rainbow_parentheses.vim'  "{{{
+    let g:rbpt_max = 16
+    nmap <Leader>rp :RainbowParenthesesToggle<CR>
+    nmap <Leader>r[ :RainbowParenthesesLoadSquare<CR>
+    nmap <Leader>rb :RainbowParenthesesLoadBraces<CR>
+    nmap <Leader>r, :RainbowParenthesesLoadChevrons<CR>
+    autocmd VimEnter * RainbowParenthesesToggle
+"}}}
+
 " vimproc is a great asynchronous execution library for Vim. Need Make
-Plugin 'shougo/vimproc.vim', {'pinned': 1}
+Plugin 'shougo/vimproc.vim', {'pinned': 1, 'do' : 'make'}
 
 " The unite or unite.vim plug-in can search and display information from arbitrary sources like files, buffers, recently used files or registers.
 Plugin 'shougo/unite.vim', {'pinned': 1}    "{{{
@@ -210,6 +246,9 @@ Plugin 'shougo/unite.vim', {'pinned': 1}    "{{{
     nmap  <Leader>ul :Unite -start-insert -no-tab line<CR>
     nmap  <Leader>uc :UniteClose<CR>
 "}}}
+
+" fugitive.vim may very well be the best Git wrapper of all time.
+Plugin 'tpope/vim-fugitive'
 
 " Lean & mean status/tabline for vim that's light as air. Replace vim-powerline above. Vim-airline integrates with a variety of plugins out of the box,
 " including ctrlp,unite,tagbar,csv,syntastic,hunks,virtualenv,tmuxline,promptline,ctrlspace. So we turn them off. See :help airline
@@ -237,13 +276,14 @@ Plugin 'tomasr/molokai'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'vim-scripts/phd'
 
-" fugitive.vim may very well be the best Git wrapper of all time.
-Plugin 'tpope/vim-fugitive'
+" Simple tmux statusline generator with support for powerline symbols and vim/airline/lightline statusline integration
+Plugin 'edkolev/tmuxline.vim'
 
-" vim-signature is a plugin to place, toggle and display marks.
+" vim-signature is a plugin to place, toggle and display marks. Quick CMD: mx dmx m- m<Space> ]` [` ]' [' ]- [- m[0-9] m?
 Plugin 'kshenoy/vim-signature'
 
-" multiple selection feature like Sublime Text's
+" multiple selection feature like Sublime Text's awesome multiple selection feature
+" Press <F6> to start, and use <C-m> to select, then press 'c' or 's' to change together
 Plugin 'terryma/vim-multiple-cursors'   "{{{
     let g:multi_cursor_use_default_mapping=0
     let g:multi_cursor_next_key='<C-m>'
@@ -254,21 +294,16 @@ Plugin 'terryma/vim-multiple-cursors'   "{{{
 "}}}
 
 " EasyMotion provides a much simpler way to use some motions in vim.
-Plugin 'easymotion/vim-easymotion'
-
-" it's useful to line up text.
-Plugin 'godlygeek/tabular'   "{{{
-    nnoremap [b :bp<CR>
-    nnoremap ]b :bn<CR>
-    map <leader>1 :b 1<CR>
-    map <leader>2 :b 2<CR>
-    map <leader>3 :b 3<CR>
-    map <leader>4 :b 4<CR>
-    map <leader>5 :b 5<CR>
-    map <leader>6 :b 6<CR>
-    map <leader>7 :b 7<CR>
-    map <leader>8 :b 8<CR>
-    map <leader>9 :b 9<CR>
+" Move to char <Leader>s, move to pre char <Leader>gE, move to next char <Leader>f, move to word <Leader>w.
+" The default leader has been changed to <Leader><Leader>.
+Plugin 'easymotion/vim-easymotion'  "{{{
+    let g:EasyMotion_smartcase = 1
+    map <Leader><Leader>l <Plug>(easymotion-lineforward)
+    map <Leader><Leader>j <Plug>(easymotion-j)
+    map <Leader><Leader>k <Plug>(easymotion-k)
+    map <Leader><Leader>h <Plug>(easymotion-linebackward)
+    map  / <Plug>(easymotion-sn)
+    omap / <Plug>(easymotion-tn)
 "}}}
 
 " Gundo.vim is Vim plugin to visualize your Vim undo tree.
@@ -276,7 +311,7 @@ Plugin 'sjl/gundo.vim'      "{{{
     nnoremap <leader>gu :GundoToggle<CR>
 "}}}
 
-" Run commands quickly.
+" Run commands quickly, useful for script.
 Plugin 'thinca/vim-quickrun'
 
 " This plugin causes all trailing whitespace to be highlighted in red.
@@ -284,13 +319,17 @@ Plugin 'bronson/vim-trailing-whitespace'    "{{{
     map <leader><space> :FixWhitespace<CR>
 "}}}
 
+" The tabular plugin must come before vim-markdown.
 Plugin 'plasticboy/vim-markdown.git'        "{{{
-    let g:vim_markdown_frontmatter=1
+    let g:vim_markdown_math = 1
+    let g:vim_markdown_frontmatter = 1
+    let g:markdown_enable_conceal = 1
+    let g:vim_markdown_new_list_item_indent = 2
 "}}}
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
-filetype plugin indent on    " required
 filetype plugin on
 
 " Brief help
@@ -306,7 +345,6 @@ filetype plugin on
 " Misc settings     {{{
 " scheme setting
 "set background=dark
-"colorscheme solarized
 "let g:molokai_original = 1
 colorscheme molokai
 
