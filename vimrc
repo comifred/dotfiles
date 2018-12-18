@@ -250,6 +250,8 @@ Plugin 'shougo/unite.vim', {'pinned': 1}    "{{{
 " fugitive.vim may very well be the best Git wrapper of all time.
 Plugin 'tpope/vim-fugitive'
 
+Plugin 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+
 " Lean & mean status/tabline for vim that's light as air. Replace vim-powerline above. Vim-airline integrates with a variety of plugins out of the box,
 " including ctrlp,unite,tagbar,csv,syntastic,hunks,virtualenv,tmuxline,promptline,ctrlspace. So we turn them off. See :help airline
 Plugin 'vim-airline/vim-airline'
